@@ -59,7 +59,7 @@ When you release a button, the input resets to zero immediately — no stuck con
 
 ## Required mods
 
-1. **[RED4ext](https://www.nexusmods.com/cyberpunk2077/mods/2380)**
+1. **[RED4ext 1.31.0 or later](https://www.nexusmods.com/cyberpunk2077/mods/2380)**
 1. **[redscript](https://www.nexusmods.com/cyberpunk2077/mods/1511)**
 1. **[ArchiveXL](https://www.nexusmods.com/cyberpunk2077/mods/4198)**
 1. **[Mod Settings](https://www.nexusmods.com/cyberpunk2077/mods/4885)** v0.2.21 or later
@@ -102,6 +102,5 @@ Source code is available on [GitHub](https://github.com/natpoh/cp2077-wheel-mod-
 ## Reporting issues
 
 Include your wheel model, Cyberpunk patch version, RED4ext version, and your most recent `red4ext/logs/direct_wheel-*.log` file.
-
 
 

@@ -1,6 +1,6 @@
 # Direct Wheel — Moza & Direct Drive Racing Wheel Support for Cyberpunk 2077
 
-Full racing wheel support for Cyberpunk 2077 v2.31 with **force feedback**, **speed-sensitive steering compensation**, and **TweakDB steering physics overrides**.
+Full racing wheel support for Cyberpunk 2077 v2.5 with **force feedback**, **speed-sensitive steering compensation**, and **TweakDB steering physics overrides**.
 
 Tested with **Moza R5**. Should work with any DirectInput-compatible wheel.
 
@@ -45,9 +45,22 @@ Tested with **Moza R5**. Should work with any DirectInput-compatible wheel.
 
 ## Requirements
 
-1. **Cyberpunk 2077 v2.31** (latest patch)
-2. **[RED4ext](https://www.nexusmods.com/cyberpunk2077/mods/2380)** — native plugin loader
+1. **Cyberpunk 2077 v2.5** (latest patch)
+2. **[RED4ext 1.31.0 or later](https://www.nexusmods.com/cyberpunk2077/mods/2380)** — native plugin loader
 3. **[Mod Settings](https://www.nexusmods.com/cyberpunk2077/mods/4885)** — in-game settings UI
+
+---
+
+## Building from Source
+
+Requires Visual Studio 2022 with the Desktop development with C++ workload, CMake 3.21+, and Git.
+
+```powershell
+git submodule update --init --recursive
+powershell -ExecutionPolicy Bypass -File build.ps1
+```
+
+The Release plugin is produced at `build/direct_wheel/Release/direct_wheel.dll`. The bundled RED4ext SDK is pinned to the revision supporting RED4ext 1.31.0 and Cyberpunk 2077 patch 2.5.
 
 ---
 
@@ -164,6 +177,5 @@ r6/scripts/direct_wheel/
 ## License
 
 MIT
-
 
 

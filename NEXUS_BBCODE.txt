@@ -68,7 +68,7 @@ When you release a button, the input resets to zero immediately — no stuck con
 
 [size=4][b]Required mods[/b][/size]
 [list=1]
-[*][url=https://www.nexusmods.com/cyberpunk2077/mods/2380]RED4ext[/url]
+[*][url=https://www.nexusmods.com/cyberpunk2077/mods/2380]RED4ext 1.31.0 or later[/url]
 [*][url=https://www.nexusmods.com/cyberpunk2077/mods/1511]redscript[/url]
 [*][url=https://www.nexusmods.com/cyberpunk2077/mods/4198]ArchiveXL[/url]
 [*][url=https://www.nexusmods.com/cyberpunk2077/mods/4885]Mod Settings[/url] v0.2.21 or later
@@ -105,5 +105,4 @@ It is highly recommended to set your wheel's rotation angle / operating range to
 
 [size=4][b]Source Code[/b][/size]
 [url=https://github.com/natpoh/cp2077-wheel-mod-moza]Source code is available on GitHub[/url]. Pull requests and feedback are welcome!
-
 
