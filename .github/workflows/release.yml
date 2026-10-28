@@ -1,0 +1,88 @@
+name: Build and Release
+
+on:
+  push:
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      # Only the RED4ext SDK is needed to compile (see CMakeLists.txt).
+      - name: Fetch RED4ext.SDK
+        run: git submodule update --init --recursive vendor/RED4ext.SDK
+
+      - name: Compute version
+        id: ver
+        shell: pwsh
+        run: |
+          $short = "${{ github.sha }}".Substring(0, 7)
+          if ("${{ github.ref_type }}" -eq "tag") {
+            $version = "${{ github.ref_name }}" -replace '^v', ''
+            $modVersion = (Get-Content -Raw mod_info.json | ConvertFrom-Json).version
+            if ($version -ne $modVersion) { Write-Warning "Tag $version differs from mod_info.json version $modVersion" }
+            "version=$version" >> $env:GITHUB_OUTPUT
+            "commit=" >> $env:GITHUB_OUTPUT
+          } else {
+            $version = (Get-Content -Raw mod_info.json | ConvertFrom-Json).version
+            "version=$version" >> $env:GITHUB_OUTPUT
+            "commit=$short" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Configure
+        run: cmake -S . -B build -A x64
+
+      - name: Build
+        run: cmake --build build --config Release --target direct_wheel
+
+      - name: Package
+        shell: pwsh
+        run: >
+          ./scripts/package-release.ps1
+          -Dll build/direct_wheel/Release/direct_wheel.dll
+          -Version "${{ steps.ver.outputs.version }}"
+          -Commit "${{ steps.ver.outputs.commit }}"
+
+      - name: Verify ZIP layout
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $zip = Get-ChildItem dist/direct_wheel-*.zip | Where-Object { $_.Name -notlike '*flight_bridge*' } | Select-Object -First 1
+          $names = [IO.Compression.ZipFile]::OpenRead($zip.FullName).Entries.FullName
+          $names
+          foreach ($required in "red4ext/plugins/direct_wheel/direct_wheel.dll", "r6/scripts/direct_wheel/direct_wheel_natives.reds") {
+            if ($names -notcontains $required) { throw "Missing $required in $($zip.Name)" }
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: direct_wheel-${{ steps.ver.outputs.version }}${{ steps.ver.outputs.commit && format('+{0}', steps.ver.outputs.commit) || '' }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
