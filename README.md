@@ -55,7 +55,7 @@ Tested with **Moza R5**. Should work with any DirectInput-compatible wheel.
 
 ### Quick Install (zip)
 
-1. Download `direct_wheel-3.2.0.zip`
+1. Download `direct_wheel-<version>.zip` from the [Releases page](https://github.com/steclarkdev/cp2077-wheel-mod-moza/releases)
 2. Extract **directly into your Cyberpunk 2077 game folder**, for example:
    ```
    D:\SteamLibrary\steamapps\common\Cyberpunk 2077\
@@ -69,6 +69,8 @@ Tested with **Moza R5**. Should work with any DirectInput-compatible wheel.
    ```
 4. **Start G HUB** (or LGS) before launching the game
 5. Launch Cyberpunk 2077
+
+Optional: `direct_wheel_flight_bridge-<version>.zip` (Let There Be Flight support) extracts the same way and adds only `r6/scripts/direct_wheel/direct_wheel_flight_bridge.reds`. `SHA256SUMS.txt` is attached for verification.
 
 ### First Launch
 - First launch after install is slow (30–60 seconds) — Redscript needs to compile
@@ -142,6 +144,25 @@ Adjust **FFB strength** first (overall), then tune individual effects.
 The mod works via a **RED4ext plugin** (`direct_wheel.dll`) that hooks `vehicle::BaseObject::UpdateVehicleCameraInput` to inject wheel axis values each frame. It also runs FFB effects (centering spring, friction, sine, jolt) via DirectInput.
 
 **Steering pipeline:** The game applies a quadratic curve to steering input (`actual_steer ≈ input²`), which makes small wheel angles feel dead (at 10° you only get 3.6% of the linear response). The mod applies the mathematical inverse — `√x` (square root) — before the game processes it, so `√x` → game squares it → `x`. This perfectly linearizes your steering across the full range. The **Speed Steering Boost** then multiplies this linearized signal to compensate for the game's speed-dependent steering attenuation.
+
+---
+
+## Building and Releasing
+
+Releases are built by `.github/workflows/release.yml` (Windows runner, CMake + RED4ext.SDK submodule) and packaged by `scripts/package-release.ps1`, which produces deterministic ZIPs (sorted entries, fixed timestamps) named `direct_wheel-<version>[+<commit>].zip`.
+
+Local build and package:
+```
+powershell -ExecutionPolicy Bypass -File build.ps1
+pwsh scripts/package-release.ps1 -Dll build/direct_wheel/Release/direct_wheel.dll
+```
+
+Cutting a release (maintainers):
+1. Bump `version` in `mod_info.json` and `CMakeLists.txt`, and add a `CHANGELOG.md` entry.
+2. Commit, then tag and push: `git tag v3.3.1 && git push origin v3.3.1`
+3. The workflow builds, packages and publishes a GitHub Release with the ZIPs and `SHA256SUMS.txt` attached.
+
+Pull requests and manual runs (`workflow_dispatch`) build the same ZIPs, named with the commit hash, as downloadable workflow artifacts.
 
 ---
 
